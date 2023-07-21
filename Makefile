@@ -40,11 +40,3 @@ build-docker-%:
 # Target for building the application in all directories
 build-docker: \
 	$(patsubst %, build-docker-%, $(DIR_NAMES)) 
-
-# Target for building the application in all directories
-build: \
-	$(patsubst %, build-%, $(DIR_NAMES)) 
-
-########################################################
-#                        Testing                       #
-########################################################
