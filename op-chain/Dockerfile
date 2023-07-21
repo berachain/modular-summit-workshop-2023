@@ -15,5 +15,3 @@ RUN npm -v
 
 # Clone the optimism repository
 RUN git clone https://github.com/celestiaorg/optimism.git .
-
-# Optionally, continue with any other steps you want
