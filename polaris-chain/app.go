@@ -27,7 +27,6 @@ import (
 
 	dbm "github.com/cosmos/cosmos-db"
 
-	"cosmossdk.io/core/address"
 	"cosmossdk.io/depinject"
 	"cosmossdk.io/log"
 	storetypes "cosmossdk.io/store/types"
@@ -118,7 +117,7 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".modulard")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".polard")
 }
 
 // NewPolarisApp returns a reference to an initialized SimApp.
@@ -135,7 +134,6 @@ func NewPolarisApp(
 	var (
 		app          = &SimApp{}
 		appBuilder   *runtime.AppBuilder
-		addrCodec    = polarcodec.EIP55Address{}
 		ethTxMempool = evmmempool.NewPolarisEthereumTxPool()
 		// merge the AppConfig and other configuration in one config
 		appConfig = depinject.Configs(
@@ -149,11 +147,6 @@ func NewPolarisApp(
 				ethTxMempool,
 				// ADVANCED CONFIGURATION
 				PrecompilesToInject(app),
-
-				// REQUIRED FOR EIP-55 ADDRESSES
-				func() address.Codec { return addrCodec },
-				func() runtime.ConsensusAddressCodec { return addrCodec },
-				func() runtime.ValidatorAddressCodec { return addrCodec },
 				//
 				// AUTH
 				//
