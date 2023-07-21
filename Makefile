@@ -29,34 +29,21 @@ endif
 ########################################################
 
 # List of services names
-DIR_NAMES := backend limit liquidation
+DIR_NAMES := celestia-da op-chain polaris-chain
 
 # Build docker images for all services
 build-docker-%:
-	@echo Building bts-$* docker image
+	@echo Building $* docker image
 	@echo ${COMMIT}
-	docker build -t bts-$*:$(COMMIT) -f services/Dockerfile --build-arg SERVICE_NAME=$* ./
+	docker build -t $*:$(COMMIT) -f $*/Dockerfile  --build-arg SERVICE_NAME=$* ./
 
 # Target for building the application in all directories
 build-docker: \
 	$(patsubst %, build-docker-%, $(DIR_NAMES)) 
-	@echo Building bts-contracts
-	@forge build --silent
-
-# Build all services
-build-%:
-	@echo Building bts-$*
-	@go build -o bin/bts-$* services/$*/cmd/main.go
 
 # Target for building the application in all directories
 build: \
 	$(patsubst %, build-%, $(DIR_NAMES)) 
-	@echo Building bts-contracts
-	@forge build --silent
-
-# Format the contracts (TODO add go formatting)
-format: |
-	forge fmt
 
 ########################################################
 #                        Testing                       #

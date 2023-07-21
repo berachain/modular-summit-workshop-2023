@@ -25,7 +25,6 @@ ARG NAME=modulard
 ARG APP_NAME=modulard
 ARG DB_BACKEND=pebbledb
 ARG CMD_PATH=./polaris-chain/modulard
-ARG FOUNDRY_DIR=contracts
 
 #######################################################
 ###         Stage 1 - Build the Application         ###

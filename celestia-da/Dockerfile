@@ -15,7 +15,7 @@ USER celestia
 
 COPY --from=celestia-app /bin/celestia-appd /bin/
 
-COPY entrypoint.sh /opt/entrypoint.sh
+COPY ./celestia-da/entrypoint.sh /opt/entrypoint.sh
 
 EXPOSE 26658 26659 9090
 
