@@ -90,5 +90,18 @@ FROM golang:${GO_VERSION}-alpine
 # Build args
 ARG APP_NAME
 
+# Install required deps
+RUN apk add --no-cache bash jq
+
+# Copy over the local information
+COPY ./polaris-chain/docker-init.sh /docker-init.sh
+COPY ./polaris-chain/config /config
+
+# Set the home directory
+ENV HOME /
+WORKDIR $HOME
+
 # Copy over built executable into a fresh container.
 COPY --from=builder /workdir/bin/${APP_NAME} /bin/
+
+CMD ["bash", "docker-init.sh"]
