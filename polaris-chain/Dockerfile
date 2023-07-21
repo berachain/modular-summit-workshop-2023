@@ -19,12 +19,12 @@
 #######################################################
 
 ARG GO_VERSION=1.20.6
-ARG GOARCH=amd64
+ARG GOARCH=arm64
 ARG GOOS=linux
 ARG NAME=modulard
 ARG APP_NAME=modulard
 ARG DB_BACKEND=pebbledb
-ARG CMD_PATH=./polaris-chain/modulard
+ARG CMD_PATH=./modulard
 
 #######################################################
 ###         Stage 1 - Build the Application         ###
@@ -39,12 +39,14 @@ RUN set -eux; \
 
 # Set the working directory
 WORKDIR /workdir
+RUN mkdir -p bin
+RUN mkdir -p /workdir/bin
 
 # Copy the go.mod and go.sum files for each module
-COPY ./polaris-chain/go.sum ./polaris-chain/go.mod ./
+COPY ./polaris-chain/go.mod ./polaris-chain/go.sum ./polaris-chain/
 
+RUN cd polaris-chain && go mod download
 # Download the go module dependencies
-RUN go mod download
 
 # Copy the rest of the source code
 COPY . .
@@ -56,6 +58,8 @@ ARG GOOS
 ARG APP_NAME
 ARG DB_BACKEND
 ARG CMD_PATH
+# Set working directory to polaris-chain to prep for building.
+WORKDIR /workdir/polaris-chain
 
 # Build Executable
 RUN VERSION=$(echo $(git describe --tags) | sed 's/^v//') && \
