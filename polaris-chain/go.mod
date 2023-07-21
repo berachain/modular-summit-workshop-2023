@@ -25,7 +25,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.50.0-beta.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
-	pkg.berachain.dev/polaris/cosmos v0.0.0-20230720022139-37f587ddf39e
+	pkg.berachain.dev/polaris/cosmos v0.0.0-20230721192447-454df3d0229a
 	pkg.berachain.dev/polaris/eth v0.0.0-20230720022139-37f587ddf39e
 )
 
