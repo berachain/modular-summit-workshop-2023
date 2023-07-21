@@ -14,4 +14,13 @@ RUN npm install -g npm@9.6.5
 RUN npm -v
 
 # Clone the optimism repository
-RUN git clone https://github.com/celestiaorg/optimism.git .
+RUN git clone https://github.com/celestiaorg/optimism.git --depth=1
+
+# Set the working directory to the optimism repository
+WORKDIR /app/optimism
+
+# Install the dependencies
+RUN npm install
+
+# Build the optimism repository
+RUN npm run build
