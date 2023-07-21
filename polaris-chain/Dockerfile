@@ -104,4 +104,5 @@ WORKDIR $HOME
 # Copy over built executable into a fresh container.
 COPY --from=builder /workdir/bin/${APP_NAME} /bin/
 
+# Start the chain.
 CMD ["bash", "docker-init.sh"]
