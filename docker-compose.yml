@@ -23,6 +23,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
+      # docker exec ops-bedrock-da-1 celestia bridge auth admin --node.store /bridge >> /shared
+
 
   polaris-chain:
     build:

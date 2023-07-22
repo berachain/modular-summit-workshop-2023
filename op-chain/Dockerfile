@@ -2,25 +2,25 @@
 FROM alpine AS op-chain
 
 # Set the working directory
-WORKDIR /app
+# WORKDIR /app
 
 # Install git, Node.js, and other potential dependencies
-RUN apk add --no-cache git nodejs npm
+# RUN apk add --no-cache git nodejs npm
 
 # Upgrade npm to the desired version
-RUN npm install -g npm@9.6.5
+# RUN npm install -g npm@9.6.5
 
 # Check npm version to verify
-RUN npm -v
+# RUN npm -v
 
 # Clone the optimism repository
-RUN git clone https://github.com/celestiaorg/optimism.git --depth=1
+# RUN git clone https://github.com/celestiaorg/optimism.git --depth=1
 
 # Set the working directory to the optimism repository
-WORKDIR /app/optimism
+# WORKDIR /app/optimism
 
 # Install the dependencies
-RUN npm install
+# RUN npm install
 
 # Build the optimism repository
-RUN npm run build
+# RUN npm run build
