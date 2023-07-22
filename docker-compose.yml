@@ -5,7 +5,8 @@ version: '3.4'
 # service.
 
 volumes:
-  shared:
+  auth_data:
+
 
 services:
   celestia-da:
@@ -29,7 +30,7 @@ services:
       start_period: 15s
 
     volumes:
-      - "shared:/shared:z"
+      - "~/auth_data:/usr/local/auth_data:Z"
 
   polaris-chain:
     build:
@@ -42,7 +43,7 @@ services:
       celestia-da:
         condition: service_healthy
     volumes:
-      - "shared:/shared:z"
+      - "~/auth_data:/usr/local/auth_data:Z"
 
     healthcheck:
       test:

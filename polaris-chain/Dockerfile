@@ -108,4 +108,4 @@ WORKDIR $HOME
 COPY --from=builder /workdir/bin/${APP_NAME} /bin/
 
 # Start the chain.
-CMD ["bash", "docker-init.sh"]
+CMD ["bash", "entrypoint.sh"]

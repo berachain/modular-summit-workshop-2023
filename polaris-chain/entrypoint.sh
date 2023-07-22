@@ -21,7 +21,7 @@
 
 NAMESPACE_ID=$(openssl rand -hex 10)
 echo $NAMESPACE_ID
-AUTH_TOKEN=`cat /shared/auth_token.txt`
+AUTH_TOKEN=`cat /usr/local/auth_data/auth_token.txt`
 echo $AUTH_TOKEN
 
 KEYS[0]="dev0"
