@@ -21,7 +21,7 @@
 
 NAMESPACE_ID=$(openssl rand -hex 10)
 echo $NAMESPACE_ID
-AUTH_TOKEN=`cat /shared/auth_token.txt`
+AUTH_TOKEN=`cat /authdata/auth_token.txt`
 echo $AUTH_TOKEN
 
 KEYS[0]="dev0"
@@ -104,4 +104,4 @@ if [[ $1 == "pending" ]]; then
 fi
 
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)m
-modulard start --pruning=nothing "$TRACE" --log_level $LOGLEVEL --api.enabled-unsafe-cors --api.enable --api.swagger --minimum-gas-prices=0.0001abera --home "$HOMEDIR" --rollkit.aggregator true --rollkit.da_layer celestia --rollkit.da_config='{"base_url":"http://celestia-da:26658","timeout":60000000000,"gas_limit":6000000,"fee":600000,"auth_token":"'$AUTH_TOKEN'"}' --rollkit.namespace_id $NAMESPACE_ID --rollkit.da_start_height 1
+modulard start --pruning=nothing "$TRACE" --log_level $LOGLEVEL --api.enabled-unsafe-cors --api.enable --api.swagger --minimum-gas-prices=0.0001abera --home "$HOMEDIR" --rollkit.aggregator true --rollkit.da_layer celestia --rollkit.da_config='{"base_url":"http://celestia-da:26658","timeout":60000000000,"gas_limit":6000000,"fee":600000,"auth_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJwdWJsaWMiLCJyZWFkIiwid3JpdGUiLCJhZG1pbiJdfQ.fROG4TABBIV34OnthKc8u86NTayO2NrRi8WNbFVnQeU"}' --rollkit.namespace_id $NAMESPACE_ID --rollkit.da_start_height 1

@@ -5,31 +5,37 @@ version: '3.4'
 # service.
 
 volumes:
-  shared:
+  authdata:
 
 services:
   celestia-da:
-    platform: linux/x86_64
-    image: "ghcr.io/rollkit/local-celestia-devnet:v0.11.0-rc8"
+    container_name: celestia-light-node
+    user: root
+    platform: "${PLATFORM}"
+    image: "ghcr.io/celestiaorg/celestia-node:v0.11.0-rc8"
+    command: celestia light start --core.ip consensus-full-arabica-9.celestia-arabica.com --p2p.network arabica
+    environment:
+      - NODE_TYPE=light
+      - P2P_NETWORK=arabica
+    volumes:
+      - $HOME/.celestia-light-arabica-9/:/home/celestia/.celestia-light-arabica-9/
+      - "${PWD}/authdata:/authdata:z"
     ports:
       - "26657:26657"
-      - "26658:26658"
       - "26659:26659"
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-f",
-          "http://localhost:26659/header/1"
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
-
-    volumes:
-      - "shared:/shared:z"
+      - "26658:26658"
+    # healthcheck:
+    #   test:
+    #     [
+    #       "CMD",
+    #       "curl",
+    #       "-f",
+    #       "http://localhost:26659/header/1"
+    #     ]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 15s
 
   polaris-chain:
     build:
@@ -38,11 +44,11 @@ services:
     ports:
       - "8545:8545"
       - "8546:8546"
-    depends_on:
-      celestia-da:
-        condition: service_healthy
+    # depends_on:
+    #   celestia-da:
+    #     condition: service_healthy
     volumes:
-      - "shared:/shared:z"
+      - "${PWD}/authdata:/authdata:z"
 
     healthcheck:
       test:
