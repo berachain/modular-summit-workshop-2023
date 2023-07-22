@@ -22,7 +22,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 30s
+      start_period: 15s
 
   polaris-chain:
     build:
@@ -31,9 +31,10 @@ services:
     ports:
       - "8545:8545"
       - "8546:8546"
-
     depends_on:
-      - celestia-da
+      celestia-da:
+        condition: service_healthy
+      
 
     # volumes:
     #   - "l1_data:/db"
