@@ -97,7 +97,7 @@ USER root
 RUN apk add --no-cache bash jq openssl
 
 # Copy over the local information
-COPY ./polaris-chain/docker-init.sh /docker-init.sh
+COPY ./polaris-chain/entrypoint.sh /entrypoint.sh
 COPY ./polaris-chain/config /config
 
 # Set the home directory
