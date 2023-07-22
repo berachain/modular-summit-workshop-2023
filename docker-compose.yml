@@ -19,7 +19,6 @@ services:
       - P2P_NETWORK=arabica
     volumes:
       - $HOME/.celestia-light-arabica-9/:/home/celestia/.celestia-light-arabica-9/
-      - "${PWD}/authdata:/authdata:z"
     ports:
       - "26657:26657"
       - "26659:26659"
@@ -35,7 +34,7 @@ services:
     #   interval: 10s
     #   timeout: 5s
     #   retries: 5
-    #   start_period: 15s
+      # start_period: 15s
 
   polaris-chain:
     build:
@@ -47,8 +46,6 @@ services:
     # depends_on:
     #   celestia-da:
     #     condition: service_healthy
-    volumes:
-      - "${PWD}/authdata:/authdata:z"
 
     healthcheck:
       test:
