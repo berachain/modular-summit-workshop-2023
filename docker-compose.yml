@@ -7,7 +7,6 @@ version: '3.4'
 volumes:
   shared:
 
-
 services:
   celestia-da:
     platform: linux/x86_64
@@ -28,10 +27,9 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
-      # docker exec ops-bedrock-da-1 celestia bridge auth admin --node.store /bridge >> /shared
 
     volumes:
-      - "shared:/shared"
+      - "shared:/shared:z"
 
   polaris-chain:
     build:
@@ -44,7 +42,7 @@ services:
       celestia-da:
         condition: service_healthy
     volumes:
-      - "shared:/shared"
+      - "shared:/shared:z"
 
     healthcheck:
       test:

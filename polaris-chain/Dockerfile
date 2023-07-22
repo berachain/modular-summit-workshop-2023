@@ -90,6 +90,9 @@ FROM golang:${GO_VERSION}-alpine
 # Build args
 ARG APP_NAME
 
+# Set the user to root
+USER root
+
 # Install required deps
 RUN apk add --no-cache bash jq openssl
 

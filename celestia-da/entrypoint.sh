@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 CHAINID="test"
 
 rm -rf /root/.celestia-app
@@ -48,6 +49,12 @@ echo $CELESTIA_CUSTOM
 
 celestia bridge init --node.store /bridge
 export CELESTIA_NODE_AUTH_TOKEN=$(celestia bridge auth admin --node.store /bridge)
+
+
+echo $CELESTIA_NODE_AUTH_TOKEN
+touch /shared/auth_token.txt
+CELESTIA_NODE_AUTH_TOKEN >> /shared/auth_token.txt
+
 echo "WARNING: Keep this auth token secret **DO NOT** log this auth token outside of development. CELESTIA_NODE_AUTH_TOKEN=$CELESTIA_NODE_AUTH_TOKEN"
 celestia bridge start \
   --node.store /bridge --gateway \
