@@ -5,9 +5,8 @@ version: '3.4'
 # service.
 
 volumes:
-  l1_data:
-  l2_data:
-  op_log:
+  shared:
+
 
 services:
   celestia-da:
@@ -18,13 +17,21 @@ services:
       - "26658:26658"
       - "26659:26659"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:26659/header/1"]
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://localhost:26659/header/1"
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 15s
       # docker exec ops-bedrock-da-1 celestia bridge auth admin --node.store /bridge >> /shared
 
+    volumes:
+      - "shared:/shared"
 
   polaris-chain:
     build:
@@ -36,155 +43,174 @@ services:
     depends_on:
       celestia-da:
         condition: service_healthy
-      
+    volumes:
+      - "shared:/shared"
 
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-X",
+          "POST",
+          "-H",
+          "Content-Type:",
+          "application/json",
+          "-d",
+          '{"jsonrpc": "2.0","method": "eth_blockNumber","params": [],"id": 83}',
+          "http://localhost:8545"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     # volumes:
     #   - "l1_data:/db"
     #   - "${PWD}/../.devnet/genesis-l1.json:/genesis.json"
     #   - "${PWD}/test-jwt-secret.txt:/config/test-jwt-secret.txt"
 
-  # l2:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.l2
-  #   ports:
-  #     - "9545:8545"
-  #     - "8060:6060"
-  #   volumes:
-  #     - "l2_data:/db"
-  #     - "${PWD}/../.devnet/genesis-l2.json:/genesis.json"
-  #     - "${PWD}/test-jwt-secret.txt:/config/test-jwt-secret.txt"
-  #   entrypoint:  # pass the L2 specific flags by overriding the entry-point and adding extra arguments
-  #     - "/bin/sh"
-  #     - "/entrypoint.sh"
-  #     - "--authrpc.jwtsecret=/config/test-jwt-secret.txt"
+    # l2:
+    #   build:
+    #     context: .
+    #     dockerfile: Dockerfile.l2
+    #   ports:
+    #     - "9545:8545"
+    #     - "8060:6060"
+    #   volumes:
+    #     - "l2_data:/db"
+    #     - "${PWD}/../.devnet/genesis-l2.json:/genesis.json"
+    #     - "${PWD}/test-jwt-secret.txt:/config/test-jwt-secret.txt"
+    #   entrypoint:  # pass the L2 specific flags by overriding the entry-point and adding extra arguments
+    #     - "/bin/sh"
+    #     - "/entrypoint.sh"
+    #     - "--authrpc.jwtsecret=/config/test-jwt-secret.txt"
 
-  # op-node:
-  #   depends_on:
-  #     - l1
-  #     - l2
-  #   build:
-  #     context: ../
-  #     dockerfile: ./op-node/Dockerfile
-  #   command: >
-  #     op-node
-  #     --l1=ws://l1:8546
-  #     --l2=http://l2:8551
-  #     --l2.jwt-secret=/config/test-jwt-secret.txt
-  #     --sequencer.enabled
-  #     --sequencer.l1-confs=0
-  #     --verifier.l1-confs=0
-  #     --p2p.sequencer.key=8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba
-  #     --rollup.config=/rollup.json
-  #     --rpc.addr=0.0.0.0
-  #     --rpc.port=8545
-  #     --p2p.listen.ip=0.0.0.0
-  #     --p2p.listen.tcp=9003
-  #     --p2p.listen.udp=9003
-  #     --p2p.scoring.peers=light
-  #     --p2p.ban.peers=true
-  #     --snapshotlog.file=/op_log/snapshot.log
-  #     --p2p.priv.path=/config/p2p-node-key.txt
-  #     --metrics.enabled
-  #     --metrics.addr=0.0.0.0
-  #     --metrics.port=7300
-  #     --pprof.enabled
-  #     --rpc.enable-admin
-  #     --da-rpc=http://da:26658
-  #     --namespace-id=000008e5f679bf7116cb
-  #     --auth-token=$CELESTIA_NODE_AUTH_TOKEN
-  #   environment:
-  #     OP_NODE_AUTH_TOKEN: $CELESTIA_NODE_AUTH_TOKEN
-  #   ports:
-  #     - "7545:8545"
-  #     - "9003:9003"
-  #     - "7300:7300"
-  #     - "6060:6060"
-  #   volumes:
-  #     - "${PWD}/p2p-sequencer-key.txt:/config/p2p-sequencer-key.txt"
-  #     - "${PWD}/p2p-node-key.txt:/config/p2p-node-key.txt"
-  #     - "${PWD}/test-jwt-secret.txt:/config/test-jwt-secret.txt"
-  #     - "${PWD}/../.devnet/rollup.json:/rollup.json"
-  #     - op_log:/op_log
+    # op-node:
+    #   depends_on:
+    #     - l1
+    #     - l2
+    #   build:
+    #     context: ../
+    #     dockerfile: ./op-node/Dockerfile
+    #   command: >
+    #     op-node
+    #     --l1=ws://l1:8546
+    #     --l2=http://l2:8551
+    #     --l2.jwt-secret=/config/test-jwt-secret.txt
+    #     --sequencer.enabled
+    #     --sequencer.l1-confs=0
+    #     --verifier.l1-confs=0
+    #     --p2p.sequencer.key=8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba
+    #     --rollup.config=/rollup.json
+    #     --rpc.addr=0.0.0.0
+    #     --rpc.port=8545
+    #     --p2p.listen.ip=0.0.0.0
+    #     --p2p.listen.tcp=9003
+    #     --p2p.listen.udp=9003
+    #     --p2p.scoring.peers=light
+    #     --p2p.ban.peers=true
+    #     --snapshotlog.file=/op_log/snapshot.log
+    #     --p2p.priv.path=/config/p2p-node-key.txt
+    #     --metrics.enabled
+    #     --metrics.addr=0.0.0.0
+    #     --metrics.port=7300
+    #     --pprof.enabled
+    #     --rpc.enable-admin
+    #     --da-rpc=http://da:26658
+    #     --namespace-id=000008e5f679bf7116cb
+    #     --auth-token=$CELESTIA_NODE_AUTH_TOKEN
+    #   environment:
+    #     OP_NODE_AUTH_TOKEN: $CELESTIA_NODE_AUTH_TOKEN
+    #   ports:
+    #     - "7545:8545"
+    #     - "9003:9003"
+    #     - "7300:7300"
+    #     - "6060:6060"
+    #   volumes:
+    #     - "${PWD}/p2p-sequencer-key.txt:/config/p2p-sequencer-key.txt"
+    #     - "${PWD}/p2p-node-key.txt:/config/p2p-node-key.txt"
+    #     - "${PWD}/test-jwt-secret.txt:/config/test-jwt-secret.txt"
+    #     - "${PWD}/../.devnet/rollup.json:/rollup.json"
+    #     - op_log:/op_log
 
-  # op-proposer:
-  #   depends_on:
-  #     - l1
-  #     - l2
-  #     - op-node
-  #   build:
-  #     context: ../
-  #     dockerfile: ./op-proposer/Dockerfile
-  #   ports:
-  #     - "6062:6060"
-  #     - "7302:7300"
-  #   environment:
-  #     OP_PROPOSER_L1_ETH_RPC: http://l1:8545
-  #     OP_PROPOSER_ROLLUP_RPC: http://op-node:8545
-  #     OP_PROPOSER_POLL_INTERVAL: 1s
-  #     OP_PROPOSER_NUM_CONFIRMATIONS: 1
-  #     OP_PROPOSER_SAFE_ABORT_NONCE_TOO_LOW_COUNT: 3
-  #     OP_PROPOSER_RESUBMISSION_TIMEOUT: 30s
-  #     OP_PROPOSER_MNEMONIC: test test test test test test test test test test test junk
-  #     OP_PROPOSER_L2_OUTPUT_HD_PATH: "m/44'/60'/0'/0/1"
-  #     OP_PROPOSER_L2OO_ADDRESS: "${L2OO_ADDRESS}"
-  #     OP_PROPOSER_PPROF_ENABLED: "true"
-  #     OP_PROPOSER_METRICS_ENABLED: "true"
-  #     OP_PROPOSER_ALLOW_NON_FINALIZED: "false"
-  #     OP_PROPOSER_NAMESPACE_ID: "000008e5f679bf7116cb"
-  #     OP_PROPOSER_DA_RPC: http://da:26659
+    # op-proposer:
+    #   depends_on:
+    #     - l1
+    #     - l2
+    #     - op-node
+    #   build:
+    #     context: ../
+    #     dockerfile: ./op-proposer/Dockerfile
+    #   ports:
+    #     - "6062:6060"
+    #     - "7302:7300"
+    #   environment:
+    #     OP_PROPOSER_L1_ETH_RPC: http://l1:8545
+    #     OP_PROPOSER_ROLLUP_RPC: http://op-node:8545
+    #     OP_PROPOSER_POLL_INTERVAL: 1s
+    #     OP_PROPOSER_NUM_CONFIRMATIONS: 1
+    #     OP_PROPOSER_SAFE_ABORT_NONCE_TOO_LOW_COUNT: 3
+    #     OP_PROPOSER_RESUBMISSION_TIMEOUT: 30s
+    #     OP_PROPOSER_MNEMONIC: test test test test test test test test test test test junk
+    #     OP_PROPOSER_L2_OUTPUT_HD_PATH: "m/44'/60'/0'/0/1"
+    #     OP_PROPOSER_L2OO_ADDRESS: "${L2OO_ADDRESS}"
+    #     OP_PROPOSER_PPROF_ENABLED: "true"
+    #     OP_PROPOSER_METRICS_ENABLED: "true"
+    #     OP_PROPOSER_ALLOW_NON_FINALIZED: "false"
+    #     OP_PROPOSER_NAMESPACE_ID: "000008e5f679bf7116cb"
+    #     OP_PROPOSER_DA_RPC: http://da:26659
 
-  # op-batcher:
-  #   depends_on:
-  #     l1:
-  #       condition: service_started
-  #     l2:
-  #       condition: service_started
-  #     op-node:
-  #       condition: service_started
-  #     da:
-  #       condition: service_healthy
-  #   build:
-  #     context: ../
-  #     dockerfile: ./op-batcher/Dockerfile
-  #   ports:
-  #     - "6061:6060"
-  #     - "7301:7300"
-  #     - "6545:8545"
-  #   environment:
-  #     OP_BATCHER_L1_ETH_RPC: http://l1:8545
-  #     OP_BATCHER_L2_ETH_RPC: http://l2:8545
-  #     OP_BATCHER_ROLLUP_RPC: http://op-node:8545
-  #     OFFLINE_GAS_ESTIMATION: null
-  #     OP_BATCHER_MAX_CHANNEL_DURATION: 1
-  #     OP_BATCHER_MAX_L1_TX_SIZE_BYTES: 120000
-  #     OP_BATCHER_TARGET_L1_TX_SIZE_BYTES: 100000
-  #     OP_BATCHER_TARGET_NUM_FRAMES: 1
-  #     OP_BATCHER_APPROX_COMPR_RATIO: 0.4
-  #     OP_BATCHER_SUB_SAFETY_MARGIN: 4 # SWS is 15, ChannelTimeout is 40
-  #     OP_BATCHER_POLL_INTERVAL: 1s
-  #     OP_BATCHER_NUM_CONFIRMATIONS: 1
-  #     OP_BATCHER_SAFE_ABORT_NONCE_TOO_LOW_COUNT: 3
-  #     OP_BATCHER_RESUBMISSION_TIMEOUT: 30s
-  #     OP_BATCHER_MNEMONIC: test test test test test test test test test test test junk
-  #     OP_BATCHER_SEQUENCER_HD_PATH: "m/44'/60'/0'/0/2"
-  #     OP_BATCHER_PPROF_ENABLED: "true"
-  #     OP_BATCHER_METRICS_ENABLED: "true"
-  #     OP_BATCHER_RPC_ENABLE_ADMIN: "true"
-  #     OP_BATCHER_NAMESPACE_ID: "000008e5f679bf7116cb"
-  #     OP_BATCHER_DA_RPC: http://da:26658
-  #     OP_BATCHER_AUTH_TOKEN: $CELESTIA_NODE_AUTH_TOKEN
+    # op-batcher:
+    #   depends_on:
+    #     l1:
+    #       condition: service_started
+    #     l2:
+    #       condition: service_started
+    #     op-node:
+    #       condition: service_started
+    #     da:
+    #       condition: service_healthy
+    #   build:
+    #     context: ../
+    #     dockerfile: ./op-batcher/Dockerfile
+    #   ports:
+    #     - "6061:6060"
+    #     - "7301:7300"
+    #     - "6545:8545"
+    #   environment:
+    #     OP_BATCHER_L1_ETH_RPC: http://l1:8545
+    #     OP_BATCHER_L2_ETH_RPC: http://l2:8545
+    #     OP_BATCHER_ROLLUP_RPC: http://op-node:8545
+    #     OFFLINE_GAS_ESTIMATION: null
+    #     OP_BATCHER_MAX_CHANNEL_DURATION: 1
+    #     OP_BATCHER_MAX_L1_TX_SIZE_BYTES: 120000
+    #     OP_BATCHER_TARGET_L1_TX_SIZE_BYTES: 100000
+    #     OP_BATCHER_TARGET_NUM_FRAMES: 1
+    #     OP_BATCHER_APPROX_COMPR_RATIO: 0.4
+    #     OP_BATCHER_SUB_SAFETY_MARGIN: 4 # SWS is 15, ChannelTimeout is 40
+    #     OP_BATCHER_POLL_INTERVAL: 1s
+    #     OP_BATCHER_NUM_CONFIRMATIONS: 1
+    #     OP_BATCHER_SAFE_ABORT_NONCE_TOO_LOW_COUNT: 3
+    #     OP_BATCHER_RESUBMISSION_TIMEOUT: 30s
+    #     OP_BATCHER_MNEMONIC: test test test test test test test test test test test junk
+    #     OP_BATCHER_SEQUENCER_HD_PATH: "m/44'/60'/0'/0/2"
+    #     OP_BATCHER_PPROF_ENABLED: "true"
+    #     OP_BATCHER_METRICS_ENABLED: "true"
+    #     OP_BATCHER_RPC_ENABLE_ADMIN: "true"
+    #     OP_BATCHER_NAMESPACE_ID: "000008e5f679bf7116cb"
+    #     OP_BATCHER_DA_RPC: http://da:26658
+    #     OP_BATCHER_AUTH_TOKEN: $CELESTIA_NODE_AUTH_TOKEN
 
-  # stateviz:
-  #   build:
-  #     context: ../
-  #     dockerfile: ./ops-bedrock/Dockerfile.stateviz
-  #   command:
-  #     - stateviz
-  #     - -addr=0.0.0.0:8080
-  #     - -snapshot=/op_log/snapshot.log
-  #     - -refresh=10s
-  #   ports:
-  #     - "9090:8080"
-  #   volumes:
-  #     - op_log:/op_log:ro
+    # stateviz:
+    #   build:
+    #     context: ../
+    #     dockerfile: ./ops-bedrock/Dockerfile.stateviz
+    #   command:
+    #     - stateviz
+    #     - -addr=0.0.0.0:8080
+    #     - -snapshot=/op_log/snapshot.log
+    #     - -refresh=10s
+    #   ports:
+    #     - "9090:8080"
+    #   volumes:
+    #     - op_log:/op_log:ro
