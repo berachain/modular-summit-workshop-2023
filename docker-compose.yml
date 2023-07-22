@@ -32,6 +32,9 @@ services:
       - "8545:8545"
       - "8546:8546"
 
+    depends_on:
+      - celestia-da
+
     # volumes:
     #   - "l1_data:/db"
     #   - "${PWD}/../.devnet/genesis-l1.json:/genesis.json"

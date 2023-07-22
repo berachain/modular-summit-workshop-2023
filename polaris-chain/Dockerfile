@@ -45,8 +45,8 @@ RUN mkdir -p /workdir/bin
 # Copy the go.mod and go.sum files for each module
 COPY ./polaris-chain/go.mod ./polaris-chain/go.sum ./polaris-chain/
 
-RUN cd polaris-chain && go mod download
 # Download the go module dependencies
+RUN cd polaris-chain && go mod download
 
 # Copy the rest of the source code
 COPY . .
@@ -91,7 +91,7 @@ FROM golang:${GO_VERSION}-alpine
 ARG APP_NAME
 
 # Install required deps
-RUN apk add --no-cache bash jq
+RUN apk add --no-cache bash jq openssl
 
 # Copy over the local information
 COPY ./polaris-chain/docker-init.sh /docker-init.sh
