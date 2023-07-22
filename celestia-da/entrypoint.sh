@@ -52,8 +52,9 @@ export CELESTIA_NODE_AUTH_TOKEN=$(celestia bridge auth admin --node.store /bridg
 
 
 echo $CELESTIA_NODE_AUTH_TOKEN
-touch /shared/auth_token.txt
-CELESTIA_NODE_AUTH_TOKEN >> /shared/auth_token.txt
+touch /usr/local/auth_data/auth_token.txt
+CELESTIA_NODE_AUTH_TOKEN >> /usr/local/auth_data/auth_token.txt
+cat /usr/local/auth_data/auth_token.txt
 
 echo "WARNING: Keep this auth token secret **DO NOT** log this auth token outside of development. CELESTIA_NODE_AUTH_TOKEN=$CELESTIA_NODE_AUTH_TOKEN"
 celestia bridge start \
