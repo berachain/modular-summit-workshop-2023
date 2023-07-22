@@ -12,10 +12,12 @@ docker run --platform linux/amd64 -p 26658:26658 -p 26659:26659 ghcr.io/rollkit/
 
 ### 2. Put Auth Token into polaris/cosmos/init.sh
 
-This auth key is required to authorize the rollkit to post to the DA.
+This auth key is required to authorize rollkit to post to the DA.
+
 ![sleep](assets/step2.png)
 
 Place it in `polaris/cosmos/init.sh`
+
 ![sleep](assets/step2.1.png)
 
 ### 3. Install Foundry && Start the Polaris Chain
