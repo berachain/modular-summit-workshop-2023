@@ -4,7 +4,13 @@
 
 First, clone this repository. Then from the root of this repo, build the docker image:
 
-<!-- TODO update this to use light node -->
+### 0. Clone this repository
+
+```bash
+git clone --recursive https://github.com/berachain/modular-summit-workshop-2023.git
+cd modular-summit-workshop-2023
+git checkout devdao-workshop
+```
 
 ### 1. Start a Celestia Light Node
 
@@ -41,9 +47,7 @@ celestia light auth admin --p2p.network arabica | pbcopy
 
 ### 2. Put Auth Token into polaris/cosmos/init.sh
 
-This auth key is required to authorize rollkit to post to the DA.
-
-![sleep](assets/step2.png)
+This auth key is required to authorize rollkit to post to the DA wiith your Light Node.
 
 Place it in `polaris/cosmos/init.sh`
 
